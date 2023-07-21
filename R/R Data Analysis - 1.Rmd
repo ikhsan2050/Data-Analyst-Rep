@@ -1,0 +1,460 @@
+```{R}
+# PCA
+library(factoextra)
+library(rgl)
+library(flexclust)
+
+# Pembuatan PCA :
+data("dentitio")
+View(dentitio)
+DataPCA <- dentitio
+head(DataPCA)
+
+# 1. Covariance
+Cov_1 <- prcomp(DataPCA, scale = FALSE)
+Cov_1
+Cov_2 <- princomp(DataPCA, cor = FALSE)
+Cov_2
+
+# Tampilkan eigen value
+# Tabel
+get_eig(Cov_1)   # Prcomp
+get_eig(Cov_2)   # Princomp
+# Grafik
+fviz_eig(Cov_1, addlabels = TRUE, ylim = c(0, 70),
+         main = "Covariance Prcomp")
+fviz_eig(Cov_2, addlabels = TRUE, ylim = c(0, 70),
+         main = "Covariance Princomp")
+
+# Tampilkan Matriks PC
+Mat_Cov_1 <- Cov_1$rotation   # Prcomp
+Mat_Cov_1
+Mat_Cov_2 <- Cov_2$loadings   # Princomp
+Mat_Cov_2
+
+# Plot 2 dimensi untuk individu
+fviz_pca_ind(Cov_1,
+             col.ind = "cos2", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "Covariance Prcomp")
+fviz_pca_ind(Cov_2,
+             col.ind = "cos2", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "Covariance Princomp")
+# "cos2" digunakan untuk melihat pengaruh individunya terhadap dimensi
+
+
+# Plot 2 dimensi untuk variabel
+fviz_pca_var(Cov_1,
+             col.var = "contrib", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "Covariance Prcomp")
+fviz_pca_var(Cov_2,
+             col.var = "contrib", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "Covariance Princomp")
+# "contrib" digunakan untuk melihat pengaruh variabel terhadap PC 1 atau 2
+
+# Plot 2 dimensi untuk variabel + individu
+fviz_pca_biplot(Cov_1, repel = TRUE,
+                col.var = "#2E9FDF", col.ind = "#FF8C00",
+                title = "Covariance Prcomp")
+fviz_pca_biplot(Cov_2, repel = TRUE,
+               col.var = "#2E9FDF", col.ind = "#FF8C00",
+                title = "Covariance Princomp")
+
+# Plot 3 Dimensi
+plot3d(Cov_1$x, col = 1, sub = "Covariance Prcomp")
+plot3d(Cov_2$scores, col = 1, sub = "Covariance Princomp")
+```
+
+```{R}
+# 2. Correlation
+Cor_1 <- prcomp(DataPCA, scale = TRUE)
+Cor_1
+Cor_2 <- princomp(DataPCA, cor = TRUE)
+Cor_2
+
+# Tampilkan eigen value
+# Tabel
+get_eig(Cor_1)   # Prcomp
+get_eig(Cor_2)   # Princomp
+# Grafik
+fviz_eig(Cor_1, addlabels = TRUE, ylim = c(0, 70),
+         main = "Correlation Prcomp")
+fviz_eig(Cor_2, addlabels = TRUE, ylim = c(0, 70),
+         main = "Correlation Princomp")
+
+# Tampilkan Matriks PC
+Mat_Cor_1 <- Cor_1$rotation   # Prcomp
+Mat_Cor_1
+Mat_Cor_2 <- Cor_2$loadings   # Princomp
+Mat_Cor_2
+
+# Plot 2 dimensi untuk individu
+fviz_pca_ind(Cor_1,
+             col.ind = "cos2", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "Correlation Prcomp")
+fviz_pca_ind(Cor_2,
+             col.ind = "cos2", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "Correlation Princomp")
+# "cos2" digunakan untuk melihat pengaruh individunya terhadap dimensi
+
+# Plot 2 dimensi untuk variabel
+fviz_pca_var(Cor_1,
+             col.var = "contrib", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "Correlation Prcomp")
+fviz_pca_var(Cor_2,
+             col.var = "contrib", 
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "Correlation Princomp")
+# "contrib" digunakan untuk melihat pengaruh variabel terhadap PC 1 atau 2
+
+# Plot 2 dimensi untuk variabel + individu
+fviz_pca_biplot(Cor_1, repel = TRUE,
+                col.var = "#2E9FDF", col.ind = "#FF8C00",
+                title = "Correlation Prcomp")
+fviz_pca_biplot(Cor_2, repel = TRUE,
+                col.var = "#2E9FDF", col.ind = "#FF8C00",
+                title = "Correlation Princomp")
+
+# Plot 3 dimensi
+plot3d(Cor_1$x, col = 1, sub = "Correlation Prcomp")
+plot3d(Cor_2$scores, col = 1, sub = "Correlation Princomp")
+```
+
+
+```{R}
+# Clustering
+library(flexclust)
+library(cluster)
+library(factoextra)
+library(mclust)
+library(Gmedian)
+
+# 1. Dataset Preparation
+data("nutrient")
+DataClust <- nutrient
+head(DataClust)
+```
+
+```{R}
+# 2. Metode Agglomerative
+# Complete Linkage
+Clust_Com <- hclust(dist(DataClust), method = "complete")
+Clust_Com
+
+fviz_dend(Clust_Com, cex = 0.4, main = "Cluster Dendrogram Complete Linkage")
+
+# Single Linkage
+Clust_Sin <- hclust(dist(DataClust), method = "single")
+Clust_Sin
+
+fviz_dend(Clust_Sin, cex = 0.4, main = "Cluster Dendrogram single Linkage")
+
+# Average Linkage
+Clust_Ave <- hclust(dist(DataClust), method = "average")
+Clust_Ave
+
+fviz_dend(Clust_Ave, cex = 0.4, main = "Cluster Dendrogram Average Linkage")
+
+# Centroid Linkage
+Clust_Cen <- hclust(dist(DataClust), method = "centroid")
+Clust_Cen
+
+fviz_dend(Clust_Cen, cex = 0.4, main = "Cluster Dendrogram Centroid Linkage")
+
+# Ward Linkage
+Clust_War <- hclust(dist(DataClust), method = "ward.D2")
+Clust_War
+
+fviz_dend(Clust_War, cex = 0.4, main = "Cluster Dendrogram Ward Linkage")
+```
+
+```{R}
+# 3, Banyaknya Clustering Berdasarkan Syntax dan Dendogram
+# Complete Linkage
+fviz_dend(Clust_Com, k = 4, k_colors = "jco", rect = TRUE,
+          cex = 0.4, main = "Complete Linkage Cluster")
+# Single Linkage
+fviz_dend(Clust_Sin, k = 2, k_colors = "jco", rect = TRUE,
+          cex = 0.4, main = "Single Linkage Cluster")
+# Average Linkage
+fviz_dend(Clust_Ave, k = 3, k_colors = "jco", rect = TRUE,
+          cex = 0.4, main = "Average Linkage Cluster")
+# Centroid Linkage
+fviz_dend(Clust_Cen, k = 3, k_colors = "jco", rect = TRUE,
+          cex = 0.4, main = "Centroid Linkage Cluster")
+# Ward Linkage
+fviz_dend(Clust_War, k = 4, k_colors = "jco", rect = TRUE,
+          cex = 0.4, main = "Ward Linkage Cluster")
+```
+
+```{R}
+# 4. Banyaknya Clustering Berdasarkan BIC
+New_DataClust <- as.matrix(nutrient)
+New_DataClust <- Mclust(nutrient)
+New_DataClust$BIC
+plot(New_DataClust$BIC)
+```
+
+```{R}
+# 5. Nilai K-Means dan Clustering
+fviz_nbclust(nutrient, kmeans, method = "silhouette")
+Data_kmean <- kmeans(nutrient, 3)
+Data_kmean
+fviz_cluster(Data_kmean, data = nutrient, rep = TRUE)
+
+# 6. Nilai K-Medoid dan Clusteirng
+fviz_nbclust(nutrient, pam, method = "silhouette")
+Data_kmedoid <- pam(nutrient, 3)
+summary(Data_kmedoid)
+fviz_cluster(Data_kmedoid, data = nutrient, rep = TRUE)
+
+# 7. Nilai K-Median
+fviz_nbclust(nutrient, kGmedian, method = "silhouette")
+Data_kmedian <- kGmedian(nutrient, 3)
+Data_kmedian
+```
+
+```{R}
+# CA & MCA
+library(flexclust)
+library(cluster)
+library(factoextra)
+library(mclust)
+library(FactoMineR)
+library(corrplot)
+library(ade4)
+
+# CA
+# 1. Dataset Preparation
+load("Tithonia.Rda")
+Data_CA <- Tithonia
+head(Data_CA)
+
+# 2. Menggunakan CA
+my_CA <- CA(Data_CA, graph = FALSE)
+my_CA
+
+# 3, Statisfical Significance
+# Chi-Square Statistics
+Chi <- 42.625
+# Degree of Freedom
+DF1 <- (1/(nrow(Data_CA)-1))*100
+DF1
+DF2 <- (1/(ncol(Data_CA)-1))*100
+DF2
+# P-Value
+PVal <- pchisq(Chi, DF1 == DF2, lower.tail = FALSE)
+PVal
+
+# 4. Eigenvalues / Variances
+get_eig(my_CA)
+fviz_screeplot(my_CA, addlabels = TRUE, ylim = c(0, 55))
+fviz_screeplot(my_CA, addlabels = TRUE, ylim = c(0, 55)) +
+  geom_hline(yintercept = DF2, linetype = 2, color = "red")
+
+# 5. Biplot
+fviz_ca_biplot(my_CA, rep = TRUE)
+
+# 6. Graph or Row variables
+my_CA_Row <- my_CA$row
+# Coord
+fviz_ca_row(my_CA, col.row = "coord",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Row$coord, is.corr = FALSE)
+# Cos2
+fviz_ca_row(my_CA, col.row = "cos2",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Row$cos2, is.corr = FALSE)
+# Coord
+fviz_ca_row(my_CA, col.row = "contrib",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Row$contrib, is.corr = FALSE)
+
+# 7. Graph of Column variables
+my_CA_Col <- my_CA$col
+# Coord
+fviz_ca_col(my_CA, col.col = "coord",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Col$coord, is.corr = FALSE)
+# Cos2
+fviz_ca_col(my_CA, col.col = "cos2",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Col$cos2, is.corr = FALSE)
+fviz_cos2(my_CA, choice = "col")
+# Coord
+fviz_ca_col(my_CA, col.col = "contrib",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Col$contrib, is.corr = FALSE)
+fviz_contrib(my_CA, choice = "col")
+
+# 8. Biplot Options
+# Asymmetric Biplot
+fviz_ca_biplot(my_CA, map ="rowprincipal",
+               arrow = c(TRUE, TRUE), repel = TRUE)
+
+# Contribution Biplot
+fviz_ca_biplot(my_CA, map ="colgreen",
+               arrow = c(TRUE, FALSE), repel = TRUE)
+
+# 9. Dimension Description
+CA_Desc <- dimdesc(my_CA)
+CA_Desc
+```
+
+```{R}
+# CA & MCA
+library(flexclust)
+library(cluster)
+library(factoextra)
+library(mclust)
+library(FactoMineR)
+library(corrplot)
+library(ade4)
+library(MASS)
+
+# CA
+# Dataset Preparation
+load("Tithonia.Rda")
+Data_CA <- Tithonia
+head(Data_CA)
+
+my_CA <- CA(Data_CA, graph = FALSE)
+my_CA
+
+# Statisfical Significance
+# Chi-Square Statistics
+Chi <- 42.652
+# Degree of Freedom
+DF1 <- (1/(nrow(Data_CA)-1))*100
+DF1
+DF2 <- (1/(ncol(Data_CA)-1))*100
+DF2
+# P-Value
+PVal <- pchisq(Chi, DF1 == DF2, lower.tail = FALSE)
+PVal
+
+# Eigenvalues / Variances
+get_eig(my_CA)
+fviz_screeplot(my_CA, addlabels = TRUE, ylim = c(0, 55)) +
+  geom_hline(yintercept = DF2, linetype = 2, color = "red")
+
+# Biplot
+fviz_ca_biplot(my_CA, rep = TRUE)
+
+# Graph or Row variables
+my_CA_Row <- my_CA$row
+# Coord
+fviz_ca_row(my_CA, col.row = "coord",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Row$coord, is.corr = FALSE)
+# Cos2
+fviz_ca_row(my_CA, col.row = "cos2",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Row$cos2, is.corr = FALSE)
+# Coord
+fviz_ca_row(my_CA, col.row = "contrib",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Row$contrib, is.corr = FALSE)
+
+# Graph of Column variables
+my_CA_Col <- my_CA$col
+# Coord
+fviz_ca_col(my_CA, col.col = "coord",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Col$coord, is.corr = FALSE)
+# Cos2
+fviz_ca_col(my_CA, col.col = "cos2",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Col$cos2, is.corr = FALSE)
+fviz_cos2(my_CA, choice = "col")
+# Coord
+fviz_ca_col(my_CA, col.col = "contrib",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+corrplot(my_CA_Col$contrib, is.corr = FALSE)
+fviz_contrib(my_CA, choice = "col")
+
+# Biplot Options
+# Asymmetric Biplot
+fviz_ca_biplot(my_CA, map ="rowprincipal",
+               arrow = c(TRUE, FALSE), repel = TRUE)
+# Contribution Biplot
+fviz_ca_biplot(my_CA, map ="colgreen",
+               arrow = c(TRUE, FALSE), repel = TRUE)
+
+# Dimension Description
+CA_Desc <- dimdesc(my_CA)
+CA_Desc
+```
+
+```{R}
+# MCA
+# Dataset Preparation
+data("quine")
+head(quine)
+Data_MCA <- MCA(quine[, 1:4], graph = FALSE)
+Data_MCA
+
+# Eigenvalues / Variances
+Data_MCA$eig
+fviz_screeplot(Data_MCA, addlabels = TRUE, ylim = c(0, 30))
+
+# Biplot
+fviz_mca_biplot(Data_MCA, repel = TRUE)
+
+# Graph of Variables
+Data_MCA$var
+# Coord
+fviz_mca_var(Data_MCA, col.var = "coord",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE)
+# Cos2
+fviz_mca_var(Data_MCA, col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE)
+# Contrib
+fviz_mca_var(Data_MCA, col.var = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE)
+
+# Graph of Individuals
+Data_MCA$ind
+# Coord
+fviz_mca_ind(Data_MCA, col.ind = "coord",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+# Cos2
+fviz_mca_ind(Data_MCA, col.ind = "cos2",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+# Contrib
+fviz_mca_ind(Data_MCA, col.ind = "contrib",
+            gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+            repel = TRUE)
+
+# Color Individuals by Groups
+fviz_ellipses(Data_MCA, c("Eth", "Sex"), geom = "point")
+fviz_mca_ind(Data_MCA, habillage = 2, addEllipses = TRUE)
+# Habillage = Index of The Column to be Used as Grouping variable
+
+# dimension Description
+MCA_Desc <- dimdesc(Data_MCA)
+MCA_Desc
+```
