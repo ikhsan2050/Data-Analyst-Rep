@@ -1,0 +1,84 @@
+UTS STATISTIKA DESKRIPTIF
+```{R}
+library(readr)
+IT_Salary <- read_csv("IT Salary Survey EU  2020_Latest.csv")
+View(IT_Salary)
+str(IT_Salary)
+
+library(dplyr)
+uts <- select(IT_Salary, Age, Gender, 'Total years of experience', 'Yearly brutto salary (without bonus and stocks) in EUR', 'Yearly bonus + stocks in EUR', 'Number of vacation days')
+View(uts)
+
+colnames(uts)[colnames(uts)=="Yearly brutto salary (without bonus and stocks) in EUR"]="Yearly Salary"
+colnames(uts)[colnames(uts)=="Yearly bonus + stocks in EUR"]="Yearly bonus + stocks"
+```
+
+```{R}
+library(ggplot2)
+library(plotly)
+# Tujuan 1
+ggplotly(ggplot(IT_Salary, aes(x = Experience_Years,
+                               y = Year_Salary,
+                               color = Fired_By_Corona)) +
+  geom_point() +
+  labs(title = "The Firing Employees Relationship based on Their Yearly Salary and Total Work Experience"))
+
+# Tujuan 2
+ggplotly(ggplot(IT_Salary, aes(x = Age,
+                               y = Year_Salary,
+                               color = Gender)) +
+  geom_point() +
+  labs(title = "Employees Yearly Salary Relationship based on Their Age and Gender"))
+
+# Tujuan 3
+ggplotly(ggplot(IT_Salary, aes(x = Bonus_Stocks,
+                               y = Work_Language,
+                               color = Gender)) +
+  geom_point() +
+  labs(title = "Employees Work Language Relationship based on Their Bonus, Stocks and Geznder"))
+  
+ggplotly(ggplot(IT_Salary) +
+  geom_count(aes(x = Bonus_Stocks,
+                 y = Work_Language,
+                 color = Gender)) +
+  labs(title = "Employees Work Language Relationship based on Their Bonus, Stocks and Gender"))  
+
+#Tujuan 4
+ggplotly(ggplot(IT_Salary, aes(x = Year_Salary)) +
+  geom_histogram(fill = "cornflowerblue",
+                 color = "white") +
+  facet_wrap(~Gender, ncol = 1) +
+  labs(title = "Employees Salary Histograms by Gender"))
+  
+ggplotly(ggplot(IT_Salary, aes(x = Year_Salary)) +
+  geom_bar(color = "cornflowerblue") +
+  facet_wrap(~Gender, ncol = 1) +
+  labs(title = "Employees Salary Histograms by Gender"))
+
+#Tujuan 5
+ggplotly(ggplot(IT_Salary, aes(x=Year_Salary,
+                               y = Age,
+                               color = Gender)) +
+  geom_point(size = 0.5) +
+  facet_wrap(~Work_Language) + 
+  theme_minimal(base_size = 9) +
+  theme(axis.text.x = element_text(angle = 45, 
+                                   hjust = 1)) +
+  labs(title = "Employees Data Relationship by Work Language",
+       x = "Salary",
+       y = "Age"))
+
+ggplotly(ggplot(IT_Salary) +
+  geom_boxplot(aes(x = Work_Language, y = Year_Salary, fill = Gender)) +
+  facet_wrap(~Fired_By_Corona) +
+  theme(axis.text.x = element_text(angle = 45)))
+  
+namadata$kolom = ifelse(is.na(namadata$kolom), ave(namadata$kolom, FUN = function(x)
+mean(x, na.rm = TRUE)), namadata$kolom)
+
+missingvalues <- colSums(is.na(IT_2020))/(nrow(IT_2020))
+IT_2020 <- na.omit(IT_2020)
+
+library(VIM)
+IT_2020_fix <- kNN(IT_2020, k=5)
+```
