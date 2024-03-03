@@ -10,5 +10,5 @@
     <th><img src="https://github.com/ikhsan2050/Data-Analyst-Rep/blob/main/R/DataAnalysis-4.png"/></th>
   </tr>
 </table>
-<p>The queries are above</p>
+<p>The syntax are above</p>
 
