@@ -6,3 +6,4 @@
     <th><img src="https://github.com/ikhsan2050/Data-Analyst-Rep/blob/main/SQL/DML_2.png" width="700"/></th>
   </tr>
 </table>
+<p>The questions and queries are above</p>
