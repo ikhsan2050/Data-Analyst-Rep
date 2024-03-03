@@ -73,12 +73,12 @@ ggplotly(ggplot(IT_Salary) +
   facet_wrap(~Fired_By_Corona) +
   theme(axis.text.x = element_text(angle = 45)))
   
-namadata$kolom = ifelse(is.na(namadata$kolom), ave(namadata$kolom, FUN = function(x)
-mean(x, na.rm = TRUE)), namadata$kolom)
+#namadata$kolom = ifelse(is.na(namadata$kolom), ave(namadata$kolom, FUN = function(x)
+#mean(x, na.rm = TRUE)), namadata$kolom)
 
-missingvalues <- colSums(is.na(IT_2020))/(nrow(IT_2020))
-IT_2020 <- na.omit(IT_2020)
+#missingvalues <- colSums(is.na(IT_2020))/(nrow(IT_2020))
+#IT_2020 <- na.omit(IT_2020)
 
-library(VIM)
-IT_2020_fix <- kNN(IT_2020, k=5)
+#library(VIM)
+#IT_2020_fix <- kNN(IT_2020, k=5)
 ```
